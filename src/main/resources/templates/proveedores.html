@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proveedores</title>
+    <link rel="stylesheet" th:href="@{/css/styless.css}">
+    <style>
+        .proveedores-page {
+            min-height: 100vh;
+            background: #f0f2f5;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        /* Formulario */
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .form-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .form-body {
+            padding: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input {
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-guardar {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-guardar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Tabla */
+        .tabla-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .tabla-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tabla-card-header h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .tabla-card-header span {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+        }
+
+        .tabla-wrapper {
+            overflow-x: auto;
+        }
+
+        table.prov-tabla {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.prov-tabla thead th {
+            background: #f8f9fc;
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e8eaf6;
+        }
+
+        table.prov-tabla tbody td {
+            padding: 14px 18px;
+            font-size: 0.9rem;
+            color: #444;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        table.prov-tabla tbody tr {
+            transition: background 0.2s;
+        }
+
+        table.prov-tabla tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        table.prov-tabla tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-estado {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .badge-estado.activo {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .btn-eliminar {
+            padding: 6px 16px;
+            background: #fce4ec;
+            color: #c62828;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-eliminar:hover {
+            background: #ef9a9a;
+            color: white;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-size: 1rem;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            transition: background 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-volver:hover {
+            background: rgba(255,255,255,0.35);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table.prov-tabla thead th,
+            table.prov-tabla tbody td {
+                padding: 10px 12px;
+                font-size: 0.82rem;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body class="proveedores-page">
+
+<nav class="navbar">
+    <div class="nav-brand">MiniMarket - ADMIN</div>
+    <div style="display:flex; gap:10px;">
+        <a href="/admin" class="btn-volver">&larr; Volver al Panel</a>
+        <a href="/">Salir</a>
+    </div>
+</nav>
+
+<div class="dash-content">
+
+    <div class="page-header">
+        <h2>Proveedores</h2>
+        <p>Registra y gestiona los proveedores de tus productos</p>
+    </div>
+
+    <!-- Mensaje de éxito o error -->
+    <div class="alert-success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert-error" th:if="${error}" th:text="${error}" style="background: #ffebee; color: #c62828; padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #c62828; font-weight: 500;"></div>
+
+    <!-- Formulario nuevo proveedor -->
+    <div class="form-card">
+        <div class="form-card-header">Registrar Nuevo Proveedor</div>
+        <div class="form-body">
+            <form method="post" th:action="@{/admin/proveedores}">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>ID Proveedor (Cédula/NIT)</label>
+                        <input type="text" name="idProveedor" required placeholder="Ej: 800.123.456">
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre Proveedor</label>
+                        <input type="text" name="nombre" required placeholder="Nombre de la empresa">
+                    </div>
+                    <div class="form-group">
+                        <label>ID Rep. Legal</label>
+                        <input type="text" name="idRepLegal" placeholder="ID del representante legal">
+                    </div>
+                </div>
+                <button type="submit" class="btn-guardar">Guardar Proveedor</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de proveedores -->
+    <div class="tabla-card">
+        <div class="tabla-card-header">
+            <h3>Lista de Proveedores</h3>
+            <span th:text="${#lists.size(proveedores)} + ' registros'">0 registros</span>
+        </div>
+
+        <div class="tabla-wrapper">
+            <table class="prov-tabla" th:if="${!#lists.isEmpty(proveedores)}">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Rep. Legal</th>
+                        <th>Estado</th>
+                        <th>Fecha Reg.</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="prov : ${proveedores}">
+                        <td style="color:#aaa; font-weight:600;" th:text="${prov.idProveedor}"></td>
+                        <td style="font-weight:600; color:#333;" th:text="${prov.nombreProveedor}"></td>
+                        <td th:text="${prov.repLegal != null ? prov.repLegal.idRepLegal : 'N/A'}"></td>
+                        <td>
+                            <span class="badge-estado activo" th:text="${prov.estadoProveedores}"></span>
+                        </td>
+                        <td th:text="${#dates.format(prov.fecha, 'dd/MM/yyyy')}"></td>
+                        <td>
+                            <a class="btn-eliminar" th:href="@{'/admin/proveedores/eliminar/' + ${prov.idProveedor}}"
+                               onclick="return confirm('¿Eliminar este proveedor?')">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.isEmpty(proveedores)}">
+            <p>No hay proveedores registrados todavia. Usa el formulario de arriba para agregar uno.</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

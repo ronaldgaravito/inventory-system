@@ -1,0 +1,94 @@
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras</title>
+    <link rel="stylesheet" th:href="@{/css/stylesP.css}" href="/css/stylesP.css">
+     
+ </head>
+ <body>
+  
+
+ <div class="tienda-page" id="tiendaPage">
+        <nav class="tienda-nav">
+            <div class="nav-brand">
+                <span class="nav-logo">🏪</span>
+                <h2>Tienda</h2>
+            </div>
+            <div class="tienda-nav-right">
+                <div class="cart-badge">🛒 <span id="carritoCountNav">0</span></div>
+                <button class="btn-back" id="btnBackDash">⬅️ Volver</button>
+            </div>
+        </nav>
+
+        <div class="tienda-banner">
+            <div class="tienda-banner-text">
+                <h1>🛍️ Nuestros Productos</h1>
+                <p>Encuentra todo lo que necesitas al mejor precio</p>
+            </div>
+            <div class="tienda-banner-icon">🏪</div>
+        </div>
+
+        <div class="tienda-filters">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchProducts" placeholder="Buscar productos...">
+            </div>
+            <button class="filter-btn active" data-cat="todos">Todos</button>
+            <button class="filter-btn" data-cat="frutas">🍎 Frutas</button>
+            <button class="filter-btn" data-cat="lacteos">🥛 Lácteos</button>
+            <button class="filter-btn" data-cat="carnes">🥩 Carnes</button>
+            <button class="filter-btn" data-cat="panaderia">🍞 Panadería</button>
+            <button class="filter-btn" data-cat="bebidas">🧃 Bebidas</button>
+            <button class="filter-btn" data-cat="limpieza">🧹 Limpieza</button>
+        </div>
+
+        <!-- GRID DE PRODUCTOS DINÁMICO -->
+        <div class="productos-grid" id="productos-container">
+            <!-- Los productos se cargarán dinámicamente desde la base de datos -->
+            <div class="loading-spinner" style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                <h2>Cargando productos... 🛒</h2>
+            </div>
+        </div>
+
+        <!-- Carrito Flotante -->
+        <button class="carrito-flotante" id="carritoFlotante" style="display:none;">
+            <span class="carrito-icon">🛒</span>
+            <span>Carrito</span>
+            <span class="cart-count" id="carritoCount">0</span>
+            <span class="carrito-total" id="flotanteTotal">$0.00</span>
+        </button>
+
+        <!-- Modal del Carrito -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-carrito">
+                <div class="modal-header">
+                    <h2>🛒 Mi Carrito</h2>
+                    <button class="modal-close" id="modalClose">✕</button>
+                </div>
+                <div class="modal-body" id="carritoBody">
+                    <div class="carrito-empty">
+                        <div class="empty-icon">🛒</div>
+                        <p>Tu carrito está vacío</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="modal-total">
+                        <span>Total:</span>
+                        <span class="total-price" id="carritoTotal">$0.00</span>
+                    </div>
+                    <button class="btn-comprar" id="btnFinalizarCompra">💳 Finalizar Compra</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div class="notification" id="notification">
+        <span class="notif-icon">✅</span>
+        <span class="notif-text" id="notifText"></span>
+    </div>
+    <script src="/js/javascript.js?v=2.0"></script>
+    </body>
+ </html>

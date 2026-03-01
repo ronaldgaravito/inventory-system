@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Representantes Legales</title>
+    <link rel="stylesheet" th:href="@{/css/styless.css}">
+    <style>
+        .replegal-page {
+            min-height: 100vh;
+            background: #f0f2f5;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        /* Formulario */
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .form-card-header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #1a5c4d;
+            padding: 16px 24px;
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .form-body {
+            padding: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input {
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #43e97b;
+        }
+
+        .btn-guardar {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #1a5c4d;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-guardar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
+        }
+
+        /* Tabla */
+        .tabla-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .tabla-card-header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #1a5c4d;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tabla-card-header h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+        }
+
+        .tabla-wrapper {
+            overflow-x: auto;
+        }
+
+        table.rep-tabla {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.rep-tabla thead th {
+            background: #f8f9fc;
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1a5c4d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+
+        table.rep-tabla tbody td {
+            padding: 14px 18px;
+            font-size: 0.9rem;
+            color: #444;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .btn-eliminar {
+            padding: 6px 16px;
+            background: #ffebee;
+            color: #c62828;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-eliminar:hover {
+            background: #ef9a9a;
+            color: white;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #1a5c4d;
+            text-decoration: none;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 8px;
+            transition: background 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-volver:hover {
+            background: rgba(255,255,255,0.6);
+        }
+    </style>
+</head>
+<body class="replegal-page">
+
+<nav class="navbar">
+    <div class="nav-brand">MiniMarket - ADMIN</div>
+    <div style="display:flex; gap:10px;">
+        <a href="/admin" class="btn-volver">&larr; Volver al Panel</a>
+        <a href="/">Salir</a>
+    </div>
+</nav>
+
+<div class="dash-content">
+
+    <div class="page-header">
+        <h2>Representantes Legales</h2>
+        <p>Gestiona las personas responsables de los proveedores</p>
+    </div>
+
+    <!-- Mensaje de éxito o error -->
+    <div class="alert-success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert-error" th:if="${error}" th:text="${error}" style="background: #ffebee; color: #c62828; padding: 12px 20px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #c62828; font-weight: 500;"></div>
+
+    <!-- Formulario -->
+    <div class="form-card">
+        <div class="form-card-header">Registrar Representante Legal</div>
+        <div class="form-body">
+            <form method="post" th:action="@{/admin/replegal}">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>ID / Cédula</label>
+                        <input type="text" name="id" required placeholder="Ej: 10.123.456">
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="nombre" required placeholder="Nombre">
+                    </div>
+                    <div class="form-group">
+                        <label>Apellido</label>
+                        <input type="text" name="apellido" required placeholder="Apellido">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" name="telefono" required placeholder="Ej: 300-1234567">
+                    </div>
+                    <div class="form-group">
+                        <label>Correo</label>
+                        <input type="email" name="correo" required placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <input type="text" name="direccion" required placeholder="Dirección">
+                    </div>
+                </div>
+                <button type="submit" class="btn-guardar">Guardar Representante</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="tabla-card">
+        <div class="tabla-card-header">
+            <h3>Lista de Representantes</h3>
+            <span th:text="${#lists.size(representantes)} + ' registros'">0 registros</span>
+        </div>
+
+        <div class="tabla-wrapper">
+            <table class="rep-tabla" th:if="${!#lists.isEmpty(representantes)}">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre Completo</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="rep : ${representantes}">
+                        <td style="color:#aaa; font-weight:600;" th:text="${rep.idRepLegal}"></td>
+                        <td style="font-weight:600; color:#333;" th:text="${rep.nombre + ' ' + rep.apellido}"></td>
+                        <td th:text="${rep.numeroTelefono}"></td>
+                        <td th:text="${rep.correo}"></td>
+                        <td th:text="${rep.direccion}"></td>
+                        <td>
+                            <a class="btn-eliminar" th:href="@{'/admin/replegal/eliminar/' + ${rep.idRepLegal}}"
+                               onclick="return confirm('¿Eliminar representante legal?')">Eliminar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" th:if="${#lists.isEmpty(representantes)}" th:style="'padding: 40px; text-align: center; color: #aaa;'">
+            <p>No hay representantes registrados todavía.</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador</title>
+   <link rel="stylesheet" th:href="@{/css/styless.css}">
+
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">🏪 MiniMarket - ADMIN</div>
+    <a href="/logout">Salir</a>
+</nav>
+
+<div class="dash-content">
+
+    <div th:if="${stockBajoCount > 0}" style="background: #fff3e0; border-left: 5px solid #e65100; padding: 15px; margin-bottom: 20px; border-radius: 8px; color: #e65100; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+        <span>⚠️ ATENCIÓN: Hay <span th:text="${stockBajoCount}">0</span> productos con stock bajo. Revisa las alertas.</span>
+    </div>
+
+    <h2>⚒︎ Panel Administrador</h2>
+
+    <div class="actions-grid">
+        <div class="action-card" id="btnInventario">📦 Inventario</div>
+        <div class="action-card" id="btnUsuarios">👥 Usuarios</div>
+        <div class="action-card" id="btnProveedores">𖡌 Proveedores</div>
+        <div class="action-card" id="btnRepLegal">🤝 Representante Legal</div>
+        <div class="action-card" id="btnAlertas" style="position: relative;">
+            🔔 Alertas
+            <span th:if="${alertCount > 0}" th:text="${alertCount}" 
+                  style="position: absolute; top: -10px; right: -10px; background: #e74c3c; color: white; padding: 3px 8px; border-radius: 50%; font-size: 0.8rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+            </span>
+        </div>
+        <div class="action-card" id="btnPedidoCompra">🛒 Pedido Compra</div>
+        <div class="action-card" id="btnHistorialPedidos">📜 Historial Pedidos</div>
+        <div class="action-card" id="btnConfiguracion">⚙️ Configuración de usuarios</div>
+    </div>
+
+</div>
+
+<script>
+    // Botón Inventario
+    document.getElementById('btnInventario').addEventListener('click', () => {
+        window.location.href = '/gestionar-productos';
+    });
+
+    // Botón Usuarios
+    document.getElementById('btnUsuarios').addEventListener('click', () => {
+        window.location.href = '/admin/usuarios';
+    });
+
+    // Botón Proveedores
+    document.getElementById('btnProveedores').addEventListener('click', () => {
+        window.location.href = '/admin/proveedores';
+    });
+
+    // Botón Alertas
+    document.getElementById('btnAlertas').addEventListener('click', () => {
+        window.location.href = '/admin/alertas';
+    });
+
+    // Botón Representante Legal
+    document.getElementById('btnRepLegal').addEventListener('click', () => {
+        window.location.href = '/admin/replegal';
+    });
+
+    // Botón Pedido Compra
+    document.getElementById('btnPedidoCompra').addEventListener('click', () => {
+        window.location.href = '/admin/pedido-compra';
+    });
+
+    // Botón Historial Pedidos
+    document.getElementById('btnHistorialPedidos').addEventListener('click', () => {
+        window.location.href = '/admin/historial-compras';
+    });
+
+    // Botón Configuración
+    document.getElementById('btnConfiguracion').addEventListener('click', () => {
+        window.location.href = '/registro';
+    });
+</script>
+
+</body>
+</html>
+

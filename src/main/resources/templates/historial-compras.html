@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Pedidos - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/stylesP.css}" href="/css/stylesP.css">
+    <style>
+        .history-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-back:hover {
+            background: #5a6268;
+            transform: translateX(-5px);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #4A90E2;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        .badge-total {
+            background: #e1f5fe;
+            color: #0288d1;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+
+    <div class="history-container">
+        <div class="header-row">
+            <h1>📜 Historial de Pedidos </h1>
+            <a href="/admin" class="btn-back">⬅️ Volver al Panel</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Compra</th>
+                    <th>Proveedor</th>
+                    <th>Rep. Legal</th>
+                    <th>Fecha</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="compra : ${compras}">
+                    <td th:text="${compra.idCompra}">C-12345</td>
+                    <td th:text="${compra.proveedor.nombreProveedor}">Proveedor S.A.</td>
+                    <td th:text="${compra.proveedor.repLegal != null ? compra.proveedor.repLegal.nombre + ' ' + compra.proveedor.repLegal.apellido : 'N/A'}">Juan Perez</td>
+                    <td th:text="${compra.fecha}">2024-02-15</td>
+                    <td>
+                        <span class="badge-total" th:text="'$' + ${#numbers.formatDecimal(compra.totalCompra, 0, 'POINT', 0, 'POINT')}">$50.000</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(compras)}">
+                    <td colspan="5" class="no-data">No se han registrado pedidos a proveedores aún.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

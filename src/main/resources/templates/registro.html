@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniMarket - Registro</title>
+    <link rel="stylesheet" th:href="@{/css/styless.css}">
+</head>
+<body>
+
+<div class="background"></div>
+
+<div class="login-container">
+    <div class="login-card" style="max-height: 90vh; overflow-y: auto;">
+
+        <div class="logo-section">
+            <div class="logo-icon">🏪</div>
+            <h1>Crear Cuenta</h1>
+            <p>Registrate en MiniMarket</p>
+        </div>
+
+        <form method="post" action="/registro">
+
+            <div class="input-group">
+                <label>Nombre de Usuario *</label>
+                <input type="text" name="username" required minlength="3" th:value="${username}">
+            </div>
+
+            <div class="input-group">
+                <label>Nombre *</label>
+                <input type="text" name="nombre" required th:value="${nombre}">
+            </div>
+
+            <div class="input-group">
+                <label>Apellido *</label>
+                <input type="text" name="apellido" required th:value="${apellido}">
+            </div>
+
+            <div class="input-group">
+                <label>Correo Electrónico *</label>
+                <input type="email" name="correo" required th:value="${correo}">
+            </div>
+
+            <div class="input-group">
+                <label>Contraseña *</label>
+                <input type="password" name="password" required minlength="4">
+            </div>
+
+            <div class="input-group">
+                <label>Confirmar Contraseña *</label>
+                <input type="password" name="confirmPassword" required minlength="4">
+            </div>
+
+            <p style="color:red; font-size: 14px; margin: 10px 0;" th:text="${error}"></p>
+
+            <button type="submit" class="btn-login">Crear Cuenta</button>
+        </form>
+
+        <div style="text-align: center; margin-top: 15px;">
+            <p style="color: #666; font-size: 14px;">
+                ¿Ya tienes cuenta? 
+                <a href="/" style="color: #4a90e2; text-decoration: none; font-weight: bold;">Inicia Sesión</a>
+            </p>
+            <div style="margin-top: 10px;">
+                <a href="/admin" style="display: inline-block; color: #764ba2; text-decoration: none; font-size: 14px; font-weight: 500; padding: 6px 12px; border: 1px solid #764ba2; border-radius: 6px; transition: all 0.3s;">
+                    &larr; Volver al Panel Admin
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

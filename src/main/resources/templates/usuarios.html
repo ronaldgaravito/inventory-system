@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios Registrados</title>
+    <link rel="stylesheet" th:href="@{/css/styless.css}">
+    <style>
+        .usuarios-page {
+            min-height: 100vh;
+            background: #f0f2f5;
+        }
+
+        .usuarios-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .usuarios-header h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .usuarios-header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        .usuarios-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 160px;
+            background: white;
+            border-radius: 14px;
+            padding: 20px 24px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .stat-icon.total { background: #e8eaf6; color: #5c6bc0; }
+        .stat-icon.activos { background: #e8f5e9; color: #2e7d32; }
+        .stat-icon.admins { background: #fff3e0; color: #e65100; }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            color: #333;
+            line-height: 1;
+        }
+
+        .stat-info span {
+            font-size: 0.82rem;
+            color: #888;
+        }
+
+        .tabla-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .tabla-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tabla-card-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .tabla-card-header span {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+        }
+
+        .tabla-wrapper {
+            overflow-x: auto;
+        }
+
+        table.usuarios-tabla {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.usuarios-tabla thead th {
+            background: #f8f9fc;
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e8eaf6;
+        }
+
+        table.usuarios-tabla tbody td {
+            padding: 14px 18px;
+            font-size: 0.9rem;
+            color: #444;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        table.usuarios-tabla tbody tr {
+            transition: background 0.2s;
+        }
+
+        table.usuarios-tabla tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        table.usuarios-tabla tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-id-cell {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-name-cell {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-cell .name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-name-cell .email {
+            font-size: 0.78rem;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .badge-admin {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .badge-cliente {
+            background: #e8eaf6;
+            color: #5c6bc0;
+        }
+
+        .badge-activo {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-inactivo {
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        .fecha-cell {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #aaa;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 14px;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            transition: background 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-volver:hover {
+            background: rgba(255,255,255,0.35);
+        }
+
+        @media (max-width: 768px) {
+            .usuarios-stats {
+                flex-direction: column;
+            }
+
+            table.usuarios-tabla thead th,
+            table.usuarios-tabla tbody td {
+                padding: 10px 12px;
+                font-size: 0.82rem;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body class="usuarios-page">
+
+<nav class="navbar">
+    <div class="nav-brand">MiniMarket - ADMIN</div>
+    <div style="display:flex; gap:10px;">
+        <a href="/admin" class="btn-volver">&larr; Volver al Panel</a>
+        <a href="/">Salir</a>
+    </div>
+</nav>
+
+<div class="dash-content">
+
+    <div class="usuarios-header">
+        <h2>Usuarios Registrados</h2>
+        <p>Gestión y visualización de todos los usuarios del sistema</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="usuarios-stats">
+        <div class="stat-card">
+            <div class="stat-icon total">T</div>
+            <div class="stat-info">
+                <h3 th:text="${#lists.size(usuarios)}">0</h3>
+                <span>Total Usuarios</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon activos">A</div>
+            <div class="stat-info">
+                <h3 th:text="${#lists.size(usuarios.?[estadoUsuario == 'Activo'])}">0</h3>
+                <span>Activos</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon admins">R</div>
+            <div class="stat-info">
+                <h3 th:text="${#lists.size(usuarios.?[idRol == 1])}">0</h3>
+                <span>Administradores</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="tabla-card">
+        <div class="tabla-card-header">
+            <h3>Lista de Usuarios</h3>
+            <span th:text="${#lists.size(usuarios)} + ' registros'">0 registros</span>
+        </div>
+
+        <div class="tabla-wrapper">
+            <table class="usuarios-tabla" th:if="${!#lists.isEmpty(usuarios)}">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ID Usuario</th>
+                        <th>Nombre Completo</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Fecha Creación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usuario, iter : ${usuarios}">
+                        <td style="color:#aaa; font-weight:600;" th:text="${iter.index + 1}"></td>
+                        <td class="user-id-cell" th:text="${usuario.idUsuario}"></td>
+                        <td>
+                            <div class="user-name-cell">
+                                <span class="name" th:text="${usuario.nombre + ' ' + usuario.apellido}"></span>
+                            </div>
+                        </td>
+                        <td th:text="${usuario.correo}"></td>
+                        <td>
+                            <span class="badge badge-admin" th:if="${usuario.idRol == 1}">Admin</span>
+                            <span class="badge badge-cliente" th:if="${usuario.idRol == 2}">Cliente</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-activo" th:if="${usuario.estadoUsuario == 'Activo'}">● Activo</span>
+                            <span class="badge badge-inactivo" th:if="${usuario.estadoUsuario != 'Activo'}">● Inactivo</span>
+                        </td>
+                        <td class="fecha-cell" th:text="${usuario.fechaCreacion}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${#lists.isEmpty(usuarios)}">
+            <div class="empty-icon">--</div>
+            <p>No hay usuarios registrados todavía</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

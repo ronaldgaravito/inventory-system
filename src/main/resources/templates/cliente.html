@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Cliente</title>
+   <link rel="stylesheet" th:href="@{/css/styless.css}">
+
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">🛒 MiniMarket - CLIENTE</div>
+    <a href="#" id="btnSalir">Salir</a>
+</nav>
+
+<div class="dash-content">
+
+    <h2>👤 Panel Cliente</h2>
+
+    <div class="actions-grid">
+        <!-- Le puse IDs para identificar cada botón -->
+        <div class="action-card" id="btnComprar">🛍️ Comprar</div>
+        <div class="action-card" id="btnHistorial">📜 Mis compras</div>
+        <div class="action-card" id="btnFacturas">📧 Factura Electrónica</div>
+        <div class="action-card" id="btnPerfil">👤 Mi perfil</div>
+    </div>
+
+</div>
+
+<!-- ⬇️ AGREGA ESTE JAVASCRIPT AL FINAL ⬇️ -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        
+        // 1. Lógica del botón COMPRAR
+        const btnComprar = document.getElementById("btnComprar");
+        if(btnComprar) {
+            btnComprar.addEventListener("click", () => {
+                // Manda al usuario a la página de productos
+                window.location.href = '/productos'; 
+            });
+        }
+
+        // 2. Lógica del botón MI PERFIL
+        const btnPerfil = document.getElementById("btnPerfil");
+        if(btnPerfil) {
+            btnPerfil.addEventListener("click", () => {
+                window.location.href = '/perfil'; 
+            });
+        }
+
+        // 3. Lógica del botón MIS COMPRAS (Placeholder)
+        const btnHistorial = document.getElementById("btnHistorial");
+        if(btnHistorial) {
+            btnHistorial.addEventListener("click", () => {
+                window.location.href = '/mis-compras'; 
+            });
+        }
+
+        // 3.5 Lógica del botón FACTURAS
+        const btnFacturas = document.getElementById("btnFacturas");
+        if(btnFacturas) {
+            btnFacturas.addEventListener("click", () => {
+                window.location.href = '/facturas'; 
+            });
+        }
+
+        // 4. Lógica del botón SALIR (vía Servlet)
+        const btnSalir = document.getElementById("btnSalir");
+        if(btnSalir) {
+            btnSalir.addEventListener("click", (e) => {
+                e.preventDefault();
+                if(confirm("¿Seguro que quieres salir?")) {
+                    window.location.href = '/logout'; 
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

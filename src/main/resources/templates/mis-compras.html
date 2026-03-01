@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Compras</title>
+    <link rel="stylesheet" th:href="@{/css/styless.css}">
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+        .table-compras {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .table-compras th, .table-compras td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .table-compras th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .table-compras tr:hover {
+            background-color: #f9f9f9;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-volver {
+            display: inline-block;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .btn-volver:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">🛒 MiniMarket - HISTORIAL</div>
+    <a th:href="@{/cliente}" class="nav-link">Volver al Panel</a>
+</nav>
+
+<div class="container">
+    <a th:href="@{/cliente}" class="btn-volver">← Volver al Panel</a>
+    
+    <h2>📜 Mi Historial de Compras</h2>
+
+    <div th:if="${#lists.isEmpty(ventas)}" class="empty-state">
+        <p>Aún no has realizado ninguna compra con tu cuenta. ¡Anímate a comprar!</p>
+    </div>
+
+    <table th:if="${not #lists.isEmpty(ventas)}" class="table-compras">
+        <thead>
+            <tr>
+                <th>ID Venta</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+                <th>Total Item</th>
+            </tr>
+        </thead>
+        <tbody>
+            <th:block th:each="venta : ${ventas}">
+                <tr th:each="detalle : ${venta.detalles}">
+                    <td th:text="${venta.idVenta}">V-0001</td>
+                    <td th:text="${venta.usuario.nombre + ' ' + venta.usuario.apellido}">Nombre Cliente</td>
+                    <td th:text="${detalle.producto.descripcion}">Nombre Producto</td>
+                    <td th:text="${detalle.cantidad}">1</td>
+                    <td th:text="${venta.fecha}">2026-02-14</td>
+                    <td th:text="${'$' + #numbers.formatInteger(detalle.subtotal, 3, 'POINT')}">$5.000</td>
+                </tr>
+            </th:block>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

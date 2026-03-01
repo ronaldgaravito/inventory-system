@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertas del Sistema</title>
+    <link rel="stylesheet" th:href="@{/css/styless.css}">
+    <style>
+        .alertas-page {
+            min-height: 100vh;
+            background: #f0f2f5;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        /* Stats */
+        .alertas-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            border-radius: 14px;
+            padding: 20px 24px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .stat-icon.warning { background: #fff3e0; color: #e65100; }
+        .stat-icon.danger { background: #fce4ec; color: #c62828; }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            color: #333;
+            line-height: 1;
+        }
+
+        .stat-info span {
+            font-size: 0.82rem;
+            color: #888;
+        }
+
+        /* Secciones */
+        .alerta-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .alerta-section-header {
+            padding: 16px 24px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alerta-section-header.stock-bajo {
+            background: linear-gradient(135deg, #e65100, #ff9800);
+        }
+
+        .alerta-section-header.inactivos {
+            background: linear-gradient(135deg, #c62828, #ef5350);
+        }
+
+        .alerta-section-header span {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+        }
+
+        .tabla-wrapper {
+            overflow-x: auto;
+        }
+
+        table.alerta-tabla {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.alerta-tabla thead th {
+            background: #f8f9fc;
+            padding: 12px 18px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #eee;
+        }
+
+        table.alerta-tabla tbody td {
+            padding: 12px 18px;
+            font-size: 0.9rem;
+            color: #444;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        table.alerta-tabla tbody tr {
+            transition: background 0.2s;
+        }
+
+        table.alerta-tabla tbody tr:hover {
+            background: #fff8f0;
+        }
+
+        table.alerta-tabla tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .stock-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .stock-badge.critico {
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        .stock-badge.bajo {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .estado-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+            font-size: 1rem;
+        }
+
+        .all-good {
+            text-align: center;
+            padding: 30px;
+            color: #2e7d32;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            transition: background 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn-volver:hover {
+            background: rgba(255,255,255,0.35);
+        }
+
+        @media (max-width: 768px) {
+            .alertas-stats {
+                flex-direction: column;
+            }
+
+            table.alerta-tabla thead th,
+            table.alerta-tabla tbody td {
+                padding: 10px 12px;
+                font-size: 0.82rem;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body class="alertas-page">
+
+<nav class="navbar">
+    <div class="nav-brand">MiniMarket - ADMIN</div>
+    <div style="display:flex; gap:10px;">
+        <a href="/admin" class="btn-volver">&larr; Volver al Panel</a>
+        <a href="/">Salir</a>
+    </div>
+</nav>
+
+<div class="dash-content">
+
+    <div class="page-header">
+        <h2>Alertas del Sistema</h2>
+        <p>Monitoreo de stock bajo y productos inactivos</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="alertas-stats">
+        <div class="stat-card">
+            <div class="stat-icon warning">!</div>
+            <div class="stat-info">
+                <h3 th:text="${#lists.size(stockBajo)}">0</h3>
+                <span>Productos con Stock Bajo</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon danger">X</div>
+            <div class="stat-info">
+                <h3 th:text="${#lists.size(inactivos)}">0</h3>
+                <span>Productos Inactivos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Bajo -->
+    <div class="alerta-section">
+        <div class="alerta-section-header stock-bajo">
+            <span>Stock Bajo (menos de 10 unidades)</span>
+            <span th:text="${#lists.size(stockBajo)} + ' productos'">0 productos</span>
+        </div>
+
+        <div class="tabla-wrapper" th:if="${!#lists.isEmpty(stockBajo)}">
+            <table class="alerta-tabla">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripcion</th>
+                        <th>Precio</th>
+                        <th>Stock Actual</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="prod : ${stockBajo}">
+                        <td style="font-weight:600; color:#333;" th:text="${prod.idProducto}"></td>
+                        <td th:text="${prod.descripcion}"></td>
+                        <td th:text="'$' + ${prod.precio}"></td>
+                        <td>
+                            <span class="stock-badge critico" th:if="${prod.stock <= 3}" th:text="${prod.stock} + ' uds'"></span>
+                            <span class="stock-badge bajo" th:if="${prod.stock > 3}" th:text="${prod.stock} + ' uds'"></span>
+                        </td>
+                        <td>
+                            <span th:if="${prod.estadoProducto == 'A'}" style="color:#2e7d32; font-weight:600;">Activo</span>
+                            <span th:if="${prod.estadoProducto != 'A'}" class="estado-badge">Inactivo</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="all-good" th:if="${#lists.isEmpty(stockBajo)}">
+            Todos los productos tienen stock suficiente.
+        </div>
+    </div>
+
+    <!-- Productos Inactivos -->
+    <div class="alerta-section">
+        <div class="alerta-section-header inactivos">
+            <span>Productos Inactivos</span>
+            <span th:text="${#lists.size(inactivos)} + ' productos'">0 productos</span>
+        </div>
+
+        <div class="tabla-wrapper" th:if="${!#lists.isEmpty(inactivos)}">
+            <table class="alerta-tabla">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Descripcion</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="prod : ${inactivos}">
+                        <td style="font-weight:600; color:#333;" th:text="${prod.idProducto}"></td>
+                        <td th:text="${prod.descripcion}"></td>
+                        <td th:text="'$' + ${prod.precio}"></td>
+                        <td th:text="${prod.stock} + ' uds'"></td>
+                        <td><span class="estado-badge">Inactivo</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="all-good" th:if="${#lists.isEmpty(inactivos)}">
+            No hay productos inactivos.
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

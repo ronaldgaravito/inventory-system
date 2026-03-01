@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido de Compra - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/styless.css}">
+    <link rel="stylesheet" th:href="@{/css/admin-styles.css}">
+    <style>
+        .pedido-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .form-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .form-group {
+            flex: 1;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 5px;
+        }
+        .rep-info {
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 6px;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #495057;
+        }
+        .btn-add {
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-add:hover { background: #219150; }
+        
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .order-table th { background: #34495e; color: white; padding: 12px; }
+        .order-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; }
+        
+        .total-section {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #c0392b;
+        }
+        
+        .btn-finalizar {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            margin-top: 30px;
+            cursor: pointer;
+        }
+        .btn-finalizar:hover { background: #34495e; }
+
+        .btn-delete { color: #e74c3c; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">🛠️ ADMIN - PEDIDO DE COMPRA</div>
+    <a th:href="@{/admin}" style="color: white; text-decoration: none;">Volver al Panel</a>
+</nav>
+
+<div class="pedido-container">
+    <h2>📦 Registrar Pedido al Proveedor</h2>
+    <p>Utilice este módulo para solicitar productos y reabastecer el inventario.</p>
+
+    <!-- Sección Proveedor -->
+    <div class="form-section">
+        <div class="form-group">
+            <label>Seleccionar Proveedor:</label>
+            <select id="selectProveedor" onchange="actualizarRepLegal()">
+                <option value="">-- Elija un proveedor --</option>
+                <option th:each="p : ${proveedores}" 
+                        th:value="${p.idProveedor}" 
+                        th:data-rep="${p.repLegal?.nombre + ' ' + p.repLegal?.apellido}"
+                        th:text="${p.nombreProveedor}">
+                </option>
+            </select>
+            <div id="repInfo" class="rep-info">Representante Legal: N/A</div>
+        </div>
+    </div>
+
+    <!-- Sección Productos -->
+    <div class="form-section">
+        <div class="form-group">
+            <label>Producto:</label>
+            <select id="selectProducto">
+                <option value="">-- Producto --</option>
+                <option th:each="prod : ${productos}" 
+                        th:value="${prod.idProducto}" 
+                        th:data-precio="${prod.precio}"
+                        th:text="${prod.descripcion + ' ($' + prod.precio + ')'}">
+                </option>
+            </select>
+        </div>
+        <div class="form-group" style="flex: 0 0 100px;">
+            <label>Cantidad:</label>
+            <input type="number" id="inputCantidad" value="1" min="1">
+        </div>
+        <div class="form-group" style="flex: 0 0 150px;">
+             <label>&nbsp;</label>
+             <button class="btn-add" onclick="agregarAlPedido()">➕ Agregar</button>
+        </div>
+    </div>
+
+    <!-- Tabla del Pedido -->
+    <table class="order-table" id="tablaPedido">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio Unit.</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Se llena dinámicamente -->
+        </tbody>
+    </table>
+
+    <div class="total-section">
+        Total: $<span id="totalPedido">0</span>
+    </div>
+
+    <button class="btn-finalizar" onclick="enviarPedido()">✅ Finalizar Pedido y Cargar Stock</button>
+</div>
+
+<script>
+    let itemsPedido = [];
+
+    function actualizarRepLegal() {
+        const select = document.getElementById("selectProveedor");
+        const selectedOption = select.options[select.selectedIndex];
+        const repName = selectedOption.getAttribute("data-rep") || "N/A";
+        document.getElementById("repInfo").innerText = "Representante Legal: " + repName;
+    }
+
+    function agregarAlPedido() {
+        const select = document.getElementById("selectProducto");
+        const idProd = select.value;
+        const nombreProd = select.options[select.selectedIndex].text.split(' ($')[0];
+        const precio = parseInt(select.options[select.selectedIndex].getAttribute("data-precio"));
+        const cantidad = parseInt(document.getElementById("inputCantidad").value);
+
+        if(!idProd) return alert("Seleccione un producto");
+        
+        const subtotal = precio * cantidad;
+        
+        itemsPedido.push({
+            idProducto: idProd,
+            nombre: nombreProd,
+            precio: precio,
+            cantidad: cantidad,
+            subtotal: subtotal
+        });
+
+        renderizarTabla();
+    }
+
+    function renderizarTabla() {
+        const tbody = document.querySelector("#tablaPedido tbody");
+        tbody.innerHTML = "";
+        let total = 0;
+
+        itemsPedido.forEach((item, index) => {
+            total += item.subtotal;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${item.nombre}</td>
+                <td>$${item.precio}</td>
+                <td>${item.cantidad}</td>
+                <td>$${item.subtotal}</td>
+                <td><span class="btn-delete" onclick="eliminarItem(${index})">❌</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById("totalPedido").innerText = total.toLocaleString();
+    }
+
+    function eliminarItem(index) {
+        itemsPedido.splice(index, 1);
+        renderizarTabla();
+    }
+
+    async function enviarPedido() {
+        const idProv = document.getElementById("selectProveedor").value;
+        if(!idProv) return alert("Seleccione un proveedor");
+        if(itemsPedido.length === 0) return alert("Añada al menos un producto");
+
+        const total = itemsPedido.reduce((acc, item) => acc + item.subtotal, 0);
+
+        const data = {
+            idProveedor: idProv,
+            total: total,
+            detalles: itemsPedido
+        };
+
+        try {
+            const res = await fetch('/api/compras/guardar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            if(result.success) {
+                alert(result.message);
+                window.location.href = '/admin';
+            } else {
+                alert("Error: " + result.message);
+            }
+        } catch (e) {
+            alert("Error de conexión");
+        }
+    }
+</script>
+
+</body>
+</html>

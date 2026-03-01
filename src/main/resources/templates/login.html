@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniMarket - Login</title>
+ <link rel="stylesheet" th:href="@{/css/styless.css}">
+
+</head>
+<body>
+
+<div class="background"></div>
+
+<div class="login-container">
+    <div class="login-card">
+
+        <div class="logo-section">
+            <div class="logo-icon">🏪</div>
+            <h1>MiniMarket</h1>
+            <p>Sistema de Gestión</p>
+        </div>
+
+        <form method="post" action="/login">
+
+            <div class="input-group">
+                <label>Usuario</label>
+                <input type="text" name="username" required>
+            </div>
+
+            <div class="input-group">
+                <label>Contraseña</label>
+                <input type="password" name="password" required>
+            </div>
+
+            <p style="color:red;" th:text="${error}"></p>
+            <p style="color:green; font-weight: bold;" th:text="${success}"></p>
+
+            <button type="submit" class="btn-login">Iniciar Sesión</button>
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

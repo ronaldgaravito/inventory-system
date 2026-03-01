@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil</title>
+    <link rel="stylesheet" th:href="@{/css/styless.css}">
+    <style>
+        .profile-page {
+            min-height: 100vh;
+            background: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 40px auto;
+            width: 90%;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .avatar-circle {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 15px;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .profile-header p {
+            margin: 5px 0 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .profile-body {
+            padding: 30px;
+        }
+
+        .info-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+
+        .info-group:hover {
+            transform: translateX(5px);
+            background: #f1f3f5;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: #e9ecef;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .info-content label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #adb5bd;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .info-content span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .profile-footer {
+            padding: 20px 30px 40px;
+            text-align: center;
+        }
+
+        .btn-volver {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-volver:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body class="profile-page">
+
+<nav class="navbar">
+    <div class="nav-brand">MiniMarket - PERFIL</div>
+    <a href="/logout">Salir</a>
+</nav>
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="avatar-circle">👤</div>
+            <h2 th:text="${usuario.nombre + ' ' + usuario.apellido}">Nombre Usuario</h2>
+            <p th:text="${usuario.idRol == 1 ? 'Administrador' : 'Cliente Premium'}">Rol</p>
+        </div>
+        
+        <div class="profile-body">
+            <div class="info-group">
+                <div class="info-icon">🆔</div>
+                <div class="info-content">
+                    <label>Usuario</label>
+                    <span th:text="${usuario.idUsuario}">user123</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-icon">📧</div>
+                <div class="info-content">
+                    <label>Correo Electrónico</label>
+                    <span th:text="${usuario.correo}">correo@ejemplo.com</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-icon">📅</div>
+                <div class="info-content">
+                    <label>Miembro desde</label>
+                    <span th:text="${#temporals.format(usuario.fechaCreacion, 'dd/MM/yyyy')}">01/01/2024</span>
+                </div>
+            </div>
+
+            <div class="info-group">
+                <div class="info-icon">🛡️</div>
+                <div class="info-content">
+                    <label>Estado de Cuenta</label>
+                    <span th:text="${usuario.estadoUsuario}" style="color: #2e7d32;">Activo</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-footer">
+            <a th:href="${usuario.idRol == 1 ? '/admin' : '/cliente'}" class="btn-volver">Volver al Panel</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
